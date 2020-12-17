@@ -180,18 +180,17 @@ fi
 
 # Dependent desktop packages
 PACKAGE_LIST_DESKTOP="xserver-xorg xserver-xorg-video-fbdev gvfs-backends gvfs-fuse xfonts-base xinit \
-	x11-xserver-utils xfce4 lxtask xfce4-terminal thunar-volman gtk2-engines gtk2-engines-murrine gtk2-engines-pixbuf \
+	x11-xserver-utils xfce4 lxtask thunar-volman gtk2-engines gtk2-engines-murrine gtk2-engines-pixbuf \
 	libgtk2.0-bin network-manager-gnome xfce4-notifyd gnome-keyring gcr libgck-1-0 p11-kit pasystray pavucontrol \
 	pulseaudio pavumeter bluez bluez-tools pulseaudio-module-bluetooth blueman libpam-gnome-keyring \
 	libgl1-mesa-dri policykit-1 profile-sync-daemon gnome-orca numix-gtk-theme synaptic apt-xapian-index lightdm lightdm-gtk-greeter"
 
 
 # Recommended desktop packages
-PACKAGE_LIST_DESKTOP_RECOMMENDS="galculator hexchat xfce4-screenshooter network-manager-openvpn-gnome mpv fbi \
-	cups-pk-helper cups geany atril xarchiver"
+PACKAGE_LIST_DESKTOP_RECOMMENDS="network-manager-openvpn-gnome fbi xarchiver"
 
 # Full desktop packages
-PACKAGE_LIST_DESKTOP_FULL="libreoffice libreoffice-style-breeze meld remmina kazam avahi-daemon transmission"
+PACKAGE_LIST_DESKTOP_FULL="avahi-daemon"
 
 # Packages installed before desktop.
 PACKAGE_LIST_PREDEPENDS=""
@@ -234,8 +233,8 @@ case $RELEASE in
 		DEBOOTSTRAP_LIST+=" rng-tools fdisk"
 		[[ -z $BUILD_MINIMAL || $BUILD_MINIMAL == no ]] && PACKAGE_LIST_RELEASE="man-db kbd net-tools gnupg2 dirmngr networkd-dispatcher command-not-found selinux-policy-default"
 		PACKAGE_LIST_DESKTOP+=" paprefs dbus-x11 numix-icon-theme onboard"
-		PACKAGE_LIST_DESKTOP_RECOMMENDS+=" chromium system-config-printer-common system-config-printer mirage"
-		PACKAGE_LIST_DESKTOP_FULL+=" thunderbird"
+		PACKAGE_LIST_DESKTOP_RECOMMENDS+=" chromium system-config-printer-common mirage"
+		PACKAGE_LIST_DESKTOP_FULL+=" gparted terminator"
 	;;
 
 	bullseye)
