@@ -8,17 +8,28 @@
 
 . /etc/armbian-release
 
-sRootPwd="sydelink"
-sName="Mastermind"
-sUserName="mastermind"
-sUserPwd="123456"
-
 check_abort()
 {
 	echo -e "\nDisabling user account creation procedure\n"
 	rm -f /root/.not_logged_in_yet
 	trap - INT
 	exit 0
+}
+
+
+function read_password()
+{
+unset password
+prompt="$1 password: "
+while IFS= read -p "$prompt" -r -s -n 1 char
+do
+	if [[ $char == $'\0' ]]
+	then
+		break
+	fi
+	prompt='*'
+	password+="$char"
+done
 }
 
 
@@ -114,25 +125,28 @@ add_user()
 
 	while [ -f "/root/.not_logged_in_yet" ]; do
 		echo -e "\nPlease provide a username (eg. your forename): \c"
-		username=$sUserName
+		read -e username
 		RealUserName="$(echo "$username" | tr '[:upper:]' '[:lower:]' | tr -d -c '[:alnum:]')"
 		[ -z "$RealUserName" ] && return
 		if ! id "$RealUserName" >/dev/null 2>&1; then break; else echo -e "Username \e[0;31m$RealUserName\x1B[0m already exists on the system."; fi
 	done
 
 	while [ -f "/root/.not_logged_in_yet" ]; do
-		first_input=$sUserPwd
+		read_password "Create"
+		first_input=$password
 		echo ""
-		second_input=$sUserPwd
+		read_password "Repeat"
+		second_input=$password
 		echo ""
                 if [[ $first_input == $second_input ]]; then
-                        okay="OK"
+                        result="$(cracklib-check <<<"$password")"
+                        okay="$(awk -F': ' '{ print $2}' <<<"$result")"
                         if [[ "$okay" == "OK" ]]; then
 				echo -e "\nPlease provide your real name (eg. John Doe): \c"
-		                RealName=$sName
+		                read -e RealName
 				adduser --quiet --disabled-password --shell /bin/bash --home /home/"$RealUserName" --gecos "$RealName" "$RealUserName"
 				(echo $first_input;echo $second_input;) | passwd "$RealUserName" >/dev/null 2>&1
-				for additionalgroup in sudo netdev audio video disk tty users games dialout plugdev input bluetooth systemd-journal ssh adm dip pulse-access; do
+				for additionalgroup in sudo netdev audio video disk tty users games dialout plugdev input bluetooth systemd-journal ssh; do
 					usermod -aG ${additionalgroup} ${RealUserName} 2>/dev/null
 				done
 
@@ -205,16 +219,20 @@ if [[ -f /root/.not_logged_in_yet && -n $(tty) ]]; then
 	trap '' 2
 	while [ -f "/root/.not_logged_in_yet" ]; do
 
+		read_password "New root"
+
 		# only allow one login. Once you enter root password, kill others.
 		loginfrom=$(who am i | awk '{print $2}')
 		who -la | grep root | grep -v "$loginfrom" | awk '{print $7}' | xargs --no-run-if-empty kill -9
 
-		first_input=$sRootPwd
+		first_input=$password
 		echo ""
-		second_input=$sRootPwd
+		read_password "Repeat"
+		second_input=$password
 		echo ""
 		if [[ $first_input == $second_input ]]; then
-			okay="OK"
+			result="$(cracklib-check <<<"$password")"
+			okay="$(awk -F': ' '{ print $2}' <<<"$result")"
 			if [[ "$okay" == "OK" ]]; then
 				(echo $first_input;echo $second_input;) | passwd root >/dev/null 2>&1
 				set_timezone_and_locales
@@ -222,7 +240,7 @@ if [[ -f /root/.not_logged_in_yet && -n $(tty) ]]; then
 				else
 				echo -e "Rejected - \e[0;31m$okay.\x1B[0m Try again."
 			fi
-		elif [[ -n $sRootPwd ]]; then
+		elif [[ -n $password ]]; then
 			echo -e "Rejected - \e[0;31mpasswords do not match.\x1B[0m Try again."
 		fi
 	done
