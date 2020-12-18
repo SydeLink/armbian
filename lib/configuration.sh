@@ -233,8 +233,8 @@ case $RELEASE in
 		DEBOOTSTRAP_LIST+=" rng-tools fdisk"
 		[[ -z $BUILD_MINIMAL || $BUILD_MINIMAL == no ]] && PACKAGE_LIST_RELEASE="man-db kbd net-tools gnupg2 dirmngr networkd-dispatcher command-not-found selinux-policy-default"
 		PACKAGE_LIST_DESKTOP+=" paprefs dbus-x11 numix-icon-theme onboard"
-		PACKAGE_LIST_DESKTOP_RECOMMENDS+=" chromium system-config-printer-common mirage"
-		PACKAGE_LIST_DESKTOP_FULL+=" gparted terminator"
+		PACKAGE_LIST_DESKTOP_RECOMMENDS+=" chromium system-config-printer-common "
+		PACKAGE_LIST_DESKTOP_FULL+=" "
 	;;
 
 	bullseye)

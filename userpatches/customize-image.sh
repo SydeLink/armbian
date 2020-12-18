@@ -24,7 +24,8 @@ Main() {
 			# InstallOpenMediaVault # uncomment to get an OMV 4 image
 			;;
 		buster)
-			InstallPacks
+			sydePacks
+			setGitUser
 			FirstBoot
 			;;
 		bullseye)
@@ -42,14 +43,25 @@ Main() {
 
 FirstBoot() {
 	echo "SydeVFX - First Boot"
-	# Configure git
-	git config --global user.name "Blaque with a Q"
-	git config --global user.email sydelink@gmail.com
+	# Set root password
+
+
+	# Create new user for desktop
+	
+
 } # FirstBoot
 
 
-InstallPacks() {
-	echo "SydeVFX - Installing Packages"
+setGitUser() {
+	echo "SydeVFX - Setting git user as: Blaque with a Q"
+	# Configure git
+	git config --global user.name "Blaque with a Q"
+	git config --global user.email sydelink@gmail.com
+} # setGitUser
+
+
+sydePacks() {
+	echo "SydeVFX - Installing Packages for Development"
 
 	#Install GParted
 	echo "Installing GParted"
@@ -76,6 +88,13 @@ InstallPacks() {
 
 	echo "Installing AppImageLauncher"
 	apt install -y ./AppImageLauncher.deb
+
+	#Install Etcher
+	echo "deb https://deb.etcher.io stable etcher" | sudo tee /etc/apt/sources.list.d/balena-etcher.list
+	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 379CE192D401AB61
+	apt update && apt install balena-etcher-electron
+
+
 } # InstallPacks
 
 Main "$@"
