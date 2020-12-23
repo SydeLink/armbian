@@ -18,6 +18,8 @@ ubuntu-*-cloudimg-console.log
 #/*userpatches*/
 #/userpatches
 /slbin/
+/output.bak/
+/output.radxa/
 
 ### General annoyances ###
 .DS_Store
