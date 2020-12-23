@@ -654,7 +654,7 @@ addtorepo()
 # parameter "delete" remove incoming directory if publishing is succesful
 # function: cycle trough distributions
 
-	local distributions=("xenial" "stretch" "bionic" "buster" "bullseye" "groovy" "focal")
+	local distributions=("buster")
 	local errors=0
 
 	for release in "${distributions[@]}"; do
